@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface FriendsRepositoryInterface {
     List<PublicUserModel> getAllFriends(UUID userId);
 
-    Optional<UUID> create(UUID currentUserId, UUID friendUserId);
+    UUID create(UUID currentUserId, UUID friendUserId);
 
     boolean exists(UUID currentUserId, UUID friendUserId);
 
