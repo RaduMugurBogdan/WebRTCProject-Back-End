@@ -6,6 +6,7 @@ import com.example.AccountAPI.repository.Mappers.GroupModelRowMapper;
 import com.example.AccountAPI.repository.Mappers.PublicUserModelMapper;
 import com.example.AccountAPI.repository.interfaces.GroupsRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -20,7 +21,7 @@ import java.util.UUID;
 de verificat in serviciu daca user-ul care incearca sa sterga un grup este de asemenea cel care a creat grupul propriu-zis
 * */
 
-
+@SpringBootApplication
 public class GroupsRepository implements GroupsRepositoryInterface {
 
     @Autowired
@@ -31,7 +32,7 @@ public class GroupsRepository implements GroupsRepositoryInterface {
     @Autowired
     PublicUserModelMapper publicUserModelMapper;
 
-    private final String GET_GROUP_MEMBERS_QUERY="SELECT USERS.id,USERS.first_name,USERS.last_name FROM USERS JOIN (SELECT id FROM GROUPS_MEMBERS WHERE id=:groupId) AS GM ON GM.user_id=USERS.id;";
+    private final String GET_GROUP_MEMBERS_QUERY="SELECT USERS.id,USERS.username,USERS.first_name,USERS.last_name FROM USERS JOIN (SELECT id FROM GROUPS_MEMBERS WHERE id=:groupId) AS GM ON GM.user_id=USERS.id;";
     private final String GET_USER_OWNED_QUERY="SELECT * FROM GROUPS WHERE user_id=:userId;";
     private final String CREATE_GROUP_COMMAND="INSERT INTO GROUPS (id,group_name,user_id) VALUES (:id,:groupName,:userId);";
     private final String DELETE_GROUP_COMMAND="DELETE FROM GROUPS WHERE id=:id;";

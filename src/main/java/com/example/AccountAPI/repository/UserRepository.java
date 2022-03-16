@@ -28,11 +28,12 @@ public class UserRepository implements UsersRepositoryInterface {
     @Autowired
     private RowMapper<UserModel> userModelRowMapper;
 
-    private final String INSERT_USER_COMMAND = "INSERT INTO USERS (id,first_name, last_name, email,password) VALUES (:id,:firstName,:lastName,:email,:password);";
+    private final String INSERT_USER_COMMAND = "INSERT INTO USERS (id, username, first_name, last_name, email,password) VALUES (:id,:username,:firstName,:lastName,:email,:password);";
     private final String DELETE_USER_COMMAND = "DELETE FROM USERS WHERE id=:id";
     private final String UPDATE_USER_COMMAND = "UPDATE USERS SET first_name = :firstName, last_name = :lastName, email=:email WHERE id=:id";
     private final String FIND_USER_QUERY = "SELECT * FROM USERS id=:id";
     private final String CHECK_USER_BY_EMAIL="SELECT COUNT(*) FROM USERS WHERE email=:email;";
+    private final String CHECK_USER_BY_USERNAME="SELECT COUNT(*) FROM USERS WHERE username=:username;";
     private final String FIND_ALL_USERS = "SELECT * FROM USERS;";
 
     @Override
@@ -40,6 +41,7 @@ public class UserRepository implements UsersRepositoryInterface {
         UUID userId=UUID.randomUUID();
         SqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("id", userId)
+                .addValue("username",user.getUsername())
                 .addValue("firstName",user.getFirstName())
                 .addValue("lastName",user.getLastName())
                 .addValue("email",user.getEmail())
@@ -77,6 +79,15 @@ public class UserRepository implements UsersRepositoryInterface {
     public boolean findByEmail(String email) {
         SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("email",email);
         if(template.queryForObject(CHECK_USER_BY_EMAIL,namedParameters,Integer.class)==1){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean findByUsername(String username) {
+        SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("username",username);
+        if(template.queryForObject(CHECK_USER_BY_USERNAME,namedParameters,Integer.class)==1){
             return true;
         }
         return false;

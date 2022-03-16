@@ -14,6 +14,7 @@ public class UserModelRowMapper implements RowMapper<UserModel> {
     public UserModel mapRow(ResultSet rs, int rowNum) throws SQLException {
         UserModel userModel=UserModel.factory()
                 .setId(rs.getObject("id", UUID.class))
+                .setUsername(rs.getString("username"))
                 .setFirstName(rs.getString("first_name"))
                 .setLastName(rs.getString("last_name"))
                 .setPassword(rs.getString("password"))

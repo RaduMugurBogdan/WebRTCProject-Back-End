@@ -5,6 +5,7 @@ import com.example.AccountAPI.dto.input_dtos.CreateUserInputDto;
 import com.example.AccountAPI.dto.output_dtos.CreateUserOutputDto;
 import com.example.AccountAPI.dto.output_dtos.GetUserOutputDto;
 import com.example.AccountAPI.exception.UserAccountExceptions.EmailAlreadyInUseException;
+import com.example.AccountAPI.exception.UserAccountExceptions.UsernameAlreadyInUseException;
 import com.example.AccountAPI.model.UserModel;
 import com.example.AccountAPI.repository.interfaces.BasicRepository;
 import com.example.AccountAPI.service.interfaces.UserServiceInterface;
@@ -25,18 +26,16 @@ public class UserController {
     private UserServiceInterface userService;
 
     @PostMapping("/user")
-    public ResponseEntity<CreateUserOutputDto> createUser(@RequestBody CreateUserInputDto user) {
+    public ResponseEntity<CreateUserOutputDto> createUser(@RequestBody CreateUserInputDto user)  {
         //System.out.println("-------------------------------------------------- create user controller called");
-        try {
-            // System.out.println("-------------------------------------------------- create user controller called in try block");
-            Optional<UUID> userId = userService.createUser(new UserModel(user.firstName, user.lastName, user.email, user.password));
-            if (userId.isPresent()) {
-                return ResponseEntity.ok().body(new CreateUserOutputDto(userId.get()));
-            }
-            return ResponseEntity.badRequest().body(new CreateUserOutputDto(UUID.randomUUID()));
-        } catch (EmailAlreadyInUseException e) {
-            return ResponseEntity.badRequest().body(new CreateUserOutputDto(UUID.randomUUID()));
+
+        // System.out.println("-------------------------------------------------- create user controller called in try block");
+        Optional<UUID> userId = userService.createUser(new UserModel(user.username,user.firstName, user.lastName, user.email, user.password));
+        if (userId.isPresent()) {
+            return ResponseEntity.ok().body(new CreateUserOutputDto(userId.get()));
         }
+        return ResponseEntity.badRequest().body(new CreateUserOutputDto(UUID.randomUUID()));
+
     }
 
     @GetMapping("/users")
@@ -44,7 +43,7 @@ public class UserController {
         List<UserModel> users = userService.getAllUsers();
         List<GetUserOutputDto> usersOutput = new LinkedList<>();
         for (UserModel user : users) {
-            usersOutput.add(new GetUserOutputDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()));
+            usersOutput.add(new GetUserOutputDto(user.getId(),user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail()));
         }
         return ResponseEntity.ok().body(usersOutput);
     }

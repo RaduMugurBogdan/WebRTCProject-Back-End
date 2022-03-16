@@ -4,6 +4,7 @@ import com.example.AccountAPI.model.PublicUserModel;
 import com.example.AccountAPI.repository.Mappers.PublicUserModelMapper;
 import com.example.AccountAPI.repository.interfaces.FriendsRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -19,14 +20,16 @@ de verificat in friends service daca o relatie de prietenie deja exista inainte 
 
 */
 
-
+@SpringBootApplication
 public class FriendsRepository implements FriendsRepositoryInterface {
     @Autowired
     private NamedParameterJdbcTemplate template;
     @Autowired
     private PublicUserModelMapper publicUserModelMapper;
 
-    private final String GET_ALL_FRIENDS_QUERY="SELECT USERS.id,USERS.first_name,USERS.last_name FROM USERS JOIN (SELECT user_id from FRIENDS WHERE user_id=:id) AS FRIENDS_IDS ON USERS.id=FRIENDS_IDS.user_id;";
+
+    private final String GET_ALL_NOT_FRIENDS_BY_NAME_QUERY="SELECT USERS.id,USERS.first_name,USERS.last_name FROM USERS LEFT JOIN (SELECT user_id from FRIENDS WHERE user_id=:id) AS FRIENDS_IDS ON USERS.id=FRIENDS_IDS.user_id WHERE FRIENDS_IDS.user_id=NULL AND WHERE lower(USERS.username) LIKE trim(:input_username);";
+    private final String GET_ALL_FRIENDS_QUERY="SELECT USERS.id,USERS.username FROM USERS JOIN (SELECT user_id from FRIENDS WHERE user_id=:id) AS FRIENDS_IDS ON USERS.id=FRIENDS_IDS.user_id;";
     private final String CHECK_RECORD_BY_USERS_QUERY ="SELECT COUNT(*) FROM FRIENDS user_id=:currentUserId AND friend_user_id=:friendUserId;";
     private final String INSERT_FRIENDS_COMMAND="INSERT INTO FRIENDS (id,user_id,friend_user_id) VALUES (:id,:currentUserId,:friendUserId);";
     private final String DELETE_FRIENDS_COMMAND="DELETE FROM USERS WHERE user_id=:currentUserId AND friend_user_id=:friend_user_id;";

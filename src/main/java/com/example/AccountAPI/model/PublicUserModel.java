@@ -6,9 +6,11 @@ public class PublicUserModel {
     private UUID id;
     private String firstName;
     private String lastName;
+    private String username;
 
-    public PublicUserModel(UUID id, String firstName, String lastName) {
+    public PublicUserModel(UUID id,String username, String firstName, String lastName) {
         this.id = id;
+        this.username=username;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -36,7 +38,9 @@ public class PublicUserModel {
         return lastName;
     }
 
-
+    public String getUsername(){
+        return username;
+    }
     public PublicUserModel setFirstName(String firstName) {
         this.firstName = firstName;
         return this;
@@ -47,4 +51,8 @@ public class PublicUserModel {
         return this;
     }
 
+    public PublicUserModel setUsername(String username){
+        this.username=username;
+        return this;
+    }
 }

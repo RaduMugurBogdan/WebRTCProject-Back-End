@@ -19,6 +19,12 @@ public class FriendsService implements FriendsServiceInterface {
         return friendsRepository.getAllFriends(userId);
     }
 
+
+    public List<PublicUserModel> findUserByName(UUID userId,String userName){
+        return null;
+    }
+
+
     public Optional<UUID> createFriendRelation(UUID currentUserId, UUID friendUserId){
         if(friendsRepository.exists(currentUserId,friendUserId)){
             return Optional.empty();
