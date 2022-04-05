@@ -2,12 +2,11 @@ package com.example.AccountAPI.util;
 
 public class AccountCreationFailureDetails {
 
-    private String fistNameError;
+    private String firstNameError;
     private String lastNameError;
     private String emailError;
     private String usernameError;
     private String passwordError;
-    private String passwordConfirmationError;
 
     private boolean errorFound=false;
 
@@ -16,20 +15,20 @@ public class AccountCreationFailureDetails {
     }
 
     public void setEmailError(String email) {
+        errorFound=true;
         this.emailError = email;
     }
 
-    public String getFistNameError() {
-        return fistNameError;
+    public String getFirstNameError() {
+        return firstNameError;
     }
 
-    public void setFistNameError(String fistNameError) {
+    public void setFirstNameError(String firstNameError) {
         errorFound=true;
-        this.fistNameError = fistNameError;
+        this.firstNameError = firstNameError;
     }
 
     public String getLastNameError() {
-        errorFound=true;
         return lastNameError;
     }
 
@@ -39,7 +38,6 @@ public class AccountCreationFailureDetails {
     }
 
     public String getUsernameError() {
-        errorFound=true;
         return usernameError;
     }
 
@@ -49,7 +47,6 @@ public class AccountCreationFailureDetails {
     }
 
     public String getPasswordError() {
-        errorFound=true;
         return passwordError;
     }
 
@@ -58,13 +55,6 @@ public class AccountCreationFailureDetails {
         this.passwordError = passwordError;
     }
 
-    public String getPasswordConfirmationError() {
-        return passwordConfirmationError;
-    }
-
-    public void setPasswordConfirmationError(String passwordConfirmationError) {
-        this.passwordConfirmationError = passwordConfirmationError;
-    }
     public boolean isErrorFound(){
         return errorFound;
     }

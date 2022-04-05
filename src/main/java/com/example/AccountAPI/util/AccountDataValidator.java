@@ -1,9 +1,8 @@
 package com.example.AccountAPI.util;
 
-import com.example.AccountAPI.dto.input_dtos.CreateUserInputDto;
+import com.example.AccountAPI.dto.input_dtos.UserLoginDto;
 import com.example.AccountAPI.model.UserModel;
 import com.example.AccountAPI.repository.UserRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,28 +29,32 @@ The username is allowed to contain only underscores ( _ ) other than alphanumeri
 The first character of the username must be an alphabetic character, i.e., [a-z] or [A-Z].
 
  */
+
 @Component
 public class AccountDataValidator {
 
     @Autowired
     private UserRepository userRepository;
 
-    private final Pattern emailPattern=Pattern.compile("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$");
+    private final Pattern emailPattern=Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private final Pattern passwordPattern=Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
     private final Pattern usernamePattern=Pattern.compile("^[a-zA-Z][a-zA-Z0-9_]{6,19}$");
-
+    private final Pattern namePattern=Pattern.compile("^[A-Z]{1}[a-z]+$");
 
     private final String EMPTY_FIELD_ERROR="The value can not be null.";
 
+
+    private final String UNKNOWN_USERNAME_ERROR="Unknown username.";
     private final String INVALID_EMAIL_ERROR="The value is not an email address.";
     private final String EMAIL_ALREADY_IN_USE_ERROR="The email is already in use.";
 
     private final String INVALID_USERNAME_ERROR="Username must contain between 7 and 20 alphanumeric characters(and '_' sign )";
     private final String USERNAME_ALREADY_IN_USE_ERROR="The username is already in use.";
 
-    private final String INVALID_NAME_ERROR ="The name must start with an uppercase character.";
+    private final String INVALID_NAME_ERROR ="The name must be one word and start with an uppercase character.";
 
     private final String PASSWORD_FORMAT_ERROR="Password must contain between 8 and 20 alphanumeric and sign (!,@,#,&,(,)) characters.";
+
 
 
 
@@ -70,77 +73,97 @@ public class AccountDataValidator {
     private final boolean isEmptyString(String input){
         return (input==null)||(input.isEmpty());
     }
+
     private final boolean isValidName(String name){
-        return Character.isUpperCase(name.charAt(0));
+        return Character.isUpperCase(name.charAt(0)) && namePattern.matcher(name).matches();
     }
 
     public Optional<AccountCreationFailureDetails> checkUserDataValidity(UserModel input){
-        AccountCreationFailureDetails errorResponce=new AccountCreationFailureDetails();
+        AccountCreationFailureDetails errorResponse=new AccountCreationFailureDetails();
 
         if(isEmptyString(input.getEmail())){
-            errorResponce.setEmailError(EMPTY_FIELD_ERROR);
+            errorResponse.setEmailError(EMPTY_FIELD_ERROR);
         }
         if(isEmptyString(input.getFirstName())){
-            errorResponce.setEmailError(EMPTY_FIELD_ERROR);
+            errorResponse.setFirstNameError(EMPTY_FIELD_ERROR);
         }
         if(isEmptyString(input.getLastName())){
-            errorResponce.setEmailError(EMPTY_FIELD_ERROR);
+            errorResponse.setLastNameError(EMPTY_FIELD_ERROR);
         }
         if(isEmptyString(input.getPassword())){
-            errorResponce.setEmailError(EMPTY_FIELD_ERROR);
+            errorResponse.setPasswordError(EMPTY_FIELD_ERROR);
         }
         if(isEmptyString(input.getUsername())){
-            errorResponce.setEmailError(EMPTY_FIELD_ERROR);
+            errorResponse.setUsernameError(EMPTY_FIELD_ERROR);
         }
 
-        if(errorResponce.getFistNameError()==null){
+        if(errorResponse.getFirstNameError()==null){
             if(!isValidName(input.getFirstName())){
-                errorResponce.setFistNameError(INVALID_NAME_ERROR);
+                errorResponse.setFirstNameError(INVALID_NAME_ERROR);
             }
         }
 
-        if(errorResponce.getLastNameError()==null){
+        if(errorResponse.getLastNameError()==null){
             if(!isValidName(input.getLastName())){
-                errorResponce.setLastNameError(INVALID_NAME_ERROR);
+                errorResponse.setLastNameError(INVALID_NAME_ERROR);
             }
         }
 
-        if(errorResponce.getEmailError()==null){
+        if(errorResponse.getEmailError()==null){
             if(!isValidEmail(input.getEmail())){
-                errorResponce.setEmailError(INVALID_EMAIL_ERROR);
+                errorResponse.setEmailError(INVALID_EMAIL_ERROR);
             }
         }
 
-        if(errorResponce.getPasswordError()==null){
+        if(errorResponse.getPasswordError()==null){
             if(!isValidPassword(input.getPassword())){
-                errorResponce.setPasswordError(PASSWORD_FORMAT_ERROR);
+                errorResponse.setPasswordError(PASSWORD_FORMAT_ERROR);
             }
         }
 
-        if(errorResponce.getUsernameError()==null){
+        if(errorResponse.getUsernameError()==null){
             if(!isValidUsername(input.getUsername())){
-                errorResponce.setUsernameError(INVALID_USERNAME_ERROR);
+                errorResponse.setUsernameError(INVALID_USERNAME_ERROR);
             }
         }
 
 
-        if(errorResponce.getUsernameError()==null){
+        if(errorResponse.getUsernameError()==null){
             if(userRepository.findByUsername(input.getUsername())){
-                errorResponce.setUsernameError(USERNAME_ALREADY_IN_USE_ERROR);
+                errorResponse.setUsernameError(USERNAME_ALREADY_IN_USE_ERROR);
             }
         }
 
-        if(errorResponce.getEmailError()==null){
+        if(errorResponse.getEmailError()==null){
             if(userRepository.findByEmail(input.getEmail())){
-                errorResponce.setEmailError(EMAIL_ALREADY_IN_USE_ERROR);
+                errorResponse.setEmailError(EMAIL_ALREADY_IN_USE_ERROR);
             }
         }
 
+        if(errorResponse.isErrorFound()){
+            return Optional.of(errorResponse);
+        }
+        return Optional.empty();
+    }
 
+    public Optional<LoginFailureDetails> checkUserLoginDataValidity(UserLoginDto input){
+        LoginFailureDetails errorResponse=new LoginFailureDetails();
 
+        if(isEmptyString(input.getUsername())){
+            errorResponse.setUsernameError(EMPTY_FIELD_ERROR);
+        }
+        if(errorResponse.getUsernameError()==null && !isValidUsername(input.getUsername())){
+            errorResponse.setUsernameError(INVALID_USERNAME_ERROR);
+        }
+        if(isEmptyString(input.getPassword())){
+            errorResponse.setPasswordError(EMPTY_FIELD_ERROR);
+        }
+        if(errorResponse.getPasswordError()==null && !userRepository.findByUsername(input.getUsername())){
+            errorResponse.setUsernameError(UNKNOWN_USERNAME_ERROR);
+        }
 
-        if(errorResponce.isErrorFound()){
-            return Optional.of(errorResponce);
+        if(errorResponse.isErrorFound()){
+            return Optional.of(errorResponse);
         }
         return Optional.empty();
     }

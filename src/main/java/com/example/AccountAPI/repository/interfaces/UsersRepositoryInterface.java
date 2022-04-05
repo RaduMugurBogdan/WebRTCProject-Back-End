@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface UsersRepositoryInterface extends BasicRepository<UserModel>{
     boolean findByEmail(String email);
     boolean findByUsername(String username);
-
+    Optional<UserModel> getByUsername(String username);
 }

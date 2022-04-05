@@ -1,8 +1,6 @@
 package com.example.AccountAPI.service;
 
-import com.example.AccountAPI.exception.UserAccountExceptions.EmailAlreadyInUseException;
-import com.example.AccountAPI.exception.UserAccountExceptions.InvalidInputException;
-import com.example.AccountAPI.exception.UserAccountExceptions.UsernameAlreadyInUseException;
+import com.example.AccountAPI.exception.UserAccountExceptions.InvalidAccountDataException;
 import com.example.AccountAPI.model.UserModel;
 import com.example.AccountAPI.repository.interfaces.UsersRepositoryInterface;
 import com.example.AccountAPI.service.interfaces.UserServiceInterface;
@@ -28,7 +26,7 @@ public class UserService implements UserServiceInterface {
 
         Optional<AccountCreationFailureDetails> errorData=dataValidator.checkUserDataValidity(user);
         if(errorData.isPresent()){
-            throw new InvalidInputException(errorData.get());
+            throw new InvalidAccountDataException(errorData.get());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return usersRepository.create(user);

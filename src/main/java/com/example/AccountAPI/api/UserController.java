@@ -1,19 +1,21 @@
 package com.example.AccountAPI.api;
 
 
+import com.example.AccountAPI.config.UserData;
 import com.example.AccountAPI.dto.input_dtos.CreateUserInputDto;
 import com.example.AccountAPI.dto.output_dtos.CreateUserOutputDto;
 import com.example.AccountAPI.dto.output_dtos.GetUserOutputDto;
-import com.example.AccountAPI.exception.UserAccountExceptions.EmailAlreadyInUseException;
-import com.example.AccountAPI.exception.UserAccountExceptions.UsernameAlreadyInUseException;
 import com.example.AccountAPI.model.UserModel;
-import com.example.AccountAPI.repository.interfaces.BasicRepository;
 import com.example.AccountAPI.service.interfaces.UserServiceInterface;
+import com.example.AccountAPI.util.AccountDataValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
+import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -24,12 +26,8 @@ import java.util.UUID;
 public class UserController {
     @Autowired
     private UserServiceInterface userService;
-
     @PostMapping("/user")
     public ResponseEntity<CreateUserOutputDto> createUser(@RequestBody CreateUserInputDto user)  {
-        //System.out.println("-------------------------------------------------- create user controller called");
-
-        // System.out.println("-------------------------------------------------- create user controller called in try block");
         Optional<UUID> userId = userService.createUser(new UserModel(user.username,user.firstName, user.lastName, user.email, user.password));
         if (userId.isPresent()) {
             return ResponseEntity.ok().body(new CreateUserOutputDto(userId.get()));
@@ -39,7 +37,8 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<GetUserOutputDto>> getUsers() {
+    @ResponseBody
+    public ResponseEntity<List<GetUserOutputDto>> getUsers(Principal principal) {
         List<UserModel> users = userService.getAllUsers();
         List<GetUserOutputDto> usersOutput = new LinkedList<>();
         for (UserModel user : users) {
