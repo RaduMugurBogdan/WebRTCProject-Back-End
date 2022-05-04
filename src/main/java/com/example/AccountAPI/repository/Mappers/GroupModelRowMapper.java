@@ -12,6 +12,6 @@ import java.util.UUID;
 public class GroupModelRowMapper implements RowMapper<GroupModel> {
     @Override
     public GroupModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new GroupModel(rs.getObject("id",UUID.class),rs.getObject("user_id",UUID.class),rs.getString("group_name"));
+        return new GroupModel(rs.getObject("id", UUID.class), rs.getObject("user_id", UUID.class), rs.getString("group_name"));
     }
 }

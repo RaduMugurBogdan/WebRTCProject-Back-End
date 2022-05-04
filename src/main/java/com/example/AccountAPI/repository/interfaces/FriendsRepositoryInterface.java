@@ -3,7 +3,6 @@ package com.example.AccountAPI.repository.interfaces;
 import com.example.AccountAPI.model.PublicUserModel;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface FriendsRepositoryInterface {

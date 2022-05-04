@@ -12,7 +12,7 @@ import java.util.UUID;
 public class UserModelRowMapper implements RowMapper<UserModel> {
     @Override
     public UserModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-        UserModel userModel=UserModel.factory()
+        UserModel userModel = UserModel.build()
                 .setId(rs.getObject("id", UUID.class))
                 .setUsername(rs.getString("username"))
                 .setFirstName(rs.getString("first_name"))

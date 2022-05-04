@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface FriendsServiceInterface {
     List<PublicUserModel> getAllFriends(UUID userId);
+
     Optional<UUID> createFriendRelation(UUID currentUserId, UUID friendUserId);
+
     void deleteFriendRelation(UUID currentUserId, UUID friendUserId);
 }

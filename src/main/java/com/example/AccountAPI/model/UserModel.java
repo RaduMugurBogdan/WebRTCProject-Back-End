@@ -1,8 +1,10 @@
 package com.example.AccountAPI.model;
 
+import javax.security.auth.Subject;
+import java.security.Principal;
 import java.util.UUID;
 
-public class UserModel {
+public class UserModel implements Principal {
     private UUID id;
     private String username;
     private String firstName;
@@ -14,28 +16,28 @@ public class UserModel {
 
     }
 
-    public UserModel(String username,String firstName, String lastName, String email) {
-        this.username=username;
+    public UserModel(String username, String firstName, String lastName, String email) {
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
 
-    public static UserModel factory() {
+    public static UserModel build() {
         return new UserModel();
     }
 
-    public UserModel(UUID id,String username, String firstName, String lastName, String email, String password) {
+    public UserModel(UUID id, String username, String firstName, String lastName, String email, String password) {
         this.id = id;
-        this.username= username;
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
     }
 
-    public UserModel(String username,String firstName, String lastName, String email, String password) {
-        this.username= username;
+    public UserModel(String username, String firstName, String lastName, String email, String password) {
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -60,9 +62,10 @@ public class UserModel {
         return this;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
+
     public String getFirstName() {
         return firstName;
     }
@@ -89,8 +92,19 @@ public class UserModel {
         this.email = email;
         return this;
     }
-    public UserModel setUsername(String username){
-        this.username=username;
+
+    public UserModel setUsername(String username) {
+        this.username = username;
         return this;
+    }
+
+    @Override
+    public String getName() {
+        return this.getUsername();
+    }
+
+    @Override
+    public boolean implies(Subject subject) {
+        return Principal.super.implies(subject);
     }
 }

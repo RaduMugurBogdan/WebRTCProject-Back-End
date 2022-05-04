@@ -1,18 +1,13 @@
 package com.example.AccountAPI.api;
 
 
-import com.example.AccountAPI.config.UserData;
 import com.example.AccountAPI.dto.input_dtos.CreateUserInputDto;
 import com.example.AccountAPI.dto.output_dtos.CreateUserOutputDto;
 import com.example.AccountAPI.dto.output_dtos.GetUserOutputDto;
 import com.example.AccountAPI.model.UserModel;
 import com.example.AccountAPI.service.interfaces.UserServiceInterface;
-import com.example.AccountAPI.util.AccountDataValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -26,9 +21,10 @@ import java.util.UUID;
 public class UserController {
     @Autowired
     private UserServiceInterface userService;
+
     @PostMapping("/user")
-    public ResponseEntity<CreateUserOutputDto> createUser(@RequestBody CreateUserInputDto user)  {
-        Optional<UUID> userId = userService.createUser(new UserModel(user.username,user.firstName, user.lastName, user.email, user.password));
+    public ResponseEntity<CreateUserOutputDto> createUser(@RequestBody CreateUserInputDto user) {
+        Optional<UUID> userId = userService.createUser(new UserModel(user.username, user.firstName, user.lastName, user.email, user.password));
         if (userId.isPresent()) {
             return ResponseEntity.ok().body(new CreateUserOutputDto(userId.get()));
         }
@@ -42,7 +38,7 @@ public class UserController {
         List<UserModel> users = userService.getAllUsers();
         List<GetUserOutputDto> usersOutput = new LinkedList<>();
         for (UserModel user : users) {
-            usersOutput.add(new GetUserOutputDto(user.getId(),user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail()));
+            usersOutput.add(new GetUserOutputDto(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail()));
         }
         return ResponseEntity.ok().body(usersOutput);
     }

@@ -3,7 +3,7 @@ package com.example.AccountAPI.util;
 public class LoginFailureDetails {
     private String usernameError;
     private String passwordError;
-    private boolean errorFound=false;
+    private boolean errorFound = false;
 
 
     public String getUsernameError() {
@@ -11,7 +11,7 @@ public class LoginFailureDetails {
     }
 
     public void setUsernameError(String usernameError) {
-        this.errorFound=true;
+        this.errorFound = true;
         this.usernameError = usernameError;
     }
 
@@ -20,7 +20,7 @@ public class LoginFailureDetails {
     }
 
     public void setPasswordError(String passwordError) {
-        this.errorFound=true;
+        this.errorFound = true;
         this.passwordError = passwordError;
     }
 

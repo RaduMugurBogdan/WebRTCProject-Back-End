@@ -8,14 +8,14 @@ public class AccountCreationFailureDetails {
     private String usernameError;
     private String passwordError;
 
-    private boolean errorFound=false;
+    private boolean errorFound = false;
 
     public String getEmailError() {
         return emailError;
     }
 
     public void setEmailError(String email) {
-        errorFound=true;
+        errorFound = true;
         this.emailError = email;
     }
 
@@ -24,7 +24,7 @@ public class AccountCreationFailureDetails {
     }
 
     public void setFirstNameError(String firstNameError) {
-        errorFound=true;
+        errorFound = true;
         this.firstNameError = firstNameError;
     }
 
@@ -33,7 +33,7 @@ public class AccountCreationFailureDetails {
     }
 
     public void setLastNameError(String lastNameError) {
-        errorFound=true;
+        errorFound = true;
         this.lastNameError = lastNameError;
     }
 
@@ -42,7 +42,7 @@ public class AccountCreationFailureDetails {
     }
 
     public void setUsernameError(String usernameError) {
-        errorFound=true;
+        errorFound = true;
         this.usernameError = usernameError;
     }
 
@@ -51,11 +51,11 @@ public class AccountCreationFailureDetails {
     }
 
     public void setPasswordError(String passwordError) {
-        errorFound=true;
+        errorFound = true;
         this.passwordError = passwordError;
     }
 
-    public boolean isErrorFound(){
+    public boolean isErrorFound() {
         return errorFound;
     }
 }

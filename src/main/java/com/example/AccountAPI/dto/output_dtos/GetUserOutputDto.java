@@ -9,9 +9,9 @@ public class GetUserOutputDto {
     private String lastName;
     private String email;
 
-    public GetUserOutputDto(UUID id,String username,String firstName, String lastName, String email) {
-        this.id=id;
-        this.username=username;
+    public GetUserOutputDto(UUID id, String username, String firstName, String lastName, String email) {
+        this.id = id;
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -22,11 +22,12 @@ public class GetUserOutputDto {
         return id;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return this.username;
     }
-    public void setUsername(String username){
-        this.username=username;
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setId(UUID id) {

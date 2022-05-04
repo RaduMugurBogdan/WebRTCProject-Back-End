@@ -15,24 +15,24 @@ public class FriendsService implements FriendsServiceInterface {
     @Autowired
     private FriendsRepositoryInterface friendsRepository;
 
-    public List<PublicUserModel> getAllFriends(UUID userId){
+    public List<PublicUserModel> getAllFriends(UUID userId) {
         return friendsRepository.getAllFriends(userId);
     }
 
 
-    public List<PublicUserModel> findUserByName(UUID userId,String userName){
+    public List<PublicUserModel> findUserByName(UUID userId, String userName) {
         return null;
     }
 
 
-    public Optional<UUID> createFriendRelation(UUID currentUserId, UUID friendUserId){
-        if(friendsRepository.exists(currentUserId,friendUserId)){
+    public Optional<UUID> createFriendRelation(UUID currentUserId, UUID friendUserId) {
+        if (friendsRepository.exists(currentUserId, friendUserId)) {
             return Optional.empty();
         }
-        return Optional.of(friendsRepository.create(currentUserId,friendUserId));
+        return Optional.of(friendsRepository.create(currentUserId, friendUserId));
     }
 
-    public void deleteFriendRelation(UUID currentUserId, UUID friendUserId){
+    public void deleteFriendRelation(UUID currentUserId, UUID friendUserId) {
         friendsRepository.delete(currentUserId, friendUserId);
     }
 

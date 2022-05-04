@@ -1,4 +1,4 @@
-package com.example.AccountAPI.dto.input_dtos;
+package com.example.AccountAPI.sockets_dtos;
 
 import java.util.UUID;
 

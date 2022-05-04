@@ -11,18 +11,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class ExceptionsHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler({ InvalidAccountDataException.class })
+    @ExceptionHandler({InvalidAccountDataException.class})
     public ResponseEntity<Object> handleAccountDataConstraintViolation(InvalidAccountDataException ex, WebRequest request) {
-       return new ResponseEntity<Object>(ex.getErrorDetails(),new HttpHeaders(),400);
+        return new ResponseEntity<Object>(ex.getErrorDetails(), new HttpHeaders(), 400);
     }
-    @ExceptionHandler({BadCredentialsException.class })
+
+    @ExceptionHandler({BadCredentialsException.class})
     public ResponseEntity<Object> handleLoginPasswordValidity(BadCredentialsException ex, WebRequest request) {
-        LoginFailureDetails loginFailureDetails=new LoginFailureDetails();
+        LoginFailureDetails loginFailureDetails = new LoginFailureDetails();
         loginFailureDetails.setPasswordError("Wrong password.");
-        return new ResponseEntity<Object>(loginFailureDetails,new HttpHeaders(),403);
+        return new ResponseEntity<Object>(loginFailureDetails, new HttpHeaders(), 403);
     }
-    @ExceptionHandler({InvalidLoginDataException.class })
+
+    @ExceptionHandler({InvalidLoginDataException.class})
     public ResponseEntity<Object> handleLoginDataConstraintViolation(InvalidLoginDataException ex, WebRequest request) {
-        return new ResponseEntity<Object>(ex.getLoginFailureDetails(),new HttpHeaders(),403);
+        return new ResponseEntity<Object>(ex.getLoginFailureDetails(), new HttpHeaders(), 403);
     }
 }
