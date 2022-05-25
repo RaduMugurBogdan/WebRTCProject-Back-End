@@ -5,6 +5,7 @@ import com.example.AccountAPI.model.PublicUserModel;
 import com.example.AccountAPI.repository.interfaces.GroupsRepositoryInterface;
 import com.example.AccountAPI.repository.interfaces.UsersRepositoryInterface;
 import com.example.AccountAPI.service.interfaces.GroupsServiceInterface;
+import com.example.AccountAPI.service.interfaces.NotificationsServiceInterface;
 import com.example.AccountAPI.sockets_dtos.GroupDetailsOutputDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,8 @@ public class GroupsService implements GroupsServiceInterface {
     private GroupsRepositoryInterface groupsRepository;
     @Autowired
     private UsersRepositoryInterface usersRepository;
+    @Autowired
+    private NotificationsServiceInterface notificationsService;
 
     @Override
     public UUID createGroup(UUID userId, List<UUID> guestsIds,String groupName) {
@@ -63,9 +66,11 @@ public class GroupsService implements GroupsServiceInterface {
 
     public void leaveGroup(UUID groupId,UUID userId){
         groupsRepository.removeUserFromGroup(groupId,userId);
+        notificationsService.userLeavedGroupNotification(groupId,userId);
     }
     public void deleteGroup(UUID groupId){
         groupsRepository.delete(groupId);
+        notificationsService.adminDeletedGroupNotification(groupId);
     }
 
     @Override
@@ -73,15 +78,16 @@ public class GroupsService implements GroupsServiceInterface {
         groupsRepository.updateGroupName(groupId,groupName);
         List<UUID> forDeletionMembers=groupsRepository.getAllGroupMembers(groupId).stream().filter(userModel->!groupMembersIds.contains(userModel.getId())).map(userModel->userModel.getId()).collect(Collectors.toList());
         UUID groupOwnerId=groupsRepository.getGroupOwner(groupId).get().getId();
+        notificationsService.deleteUsersFromGroupNotification(groupId,forDeletionMembers);
         for(UUID memberId:forDeletionMembers){
             if(!groupOwnerId.equals(memberId)){
                 groupsRepository.removeUserFromGroup(groupId,memberId);
             }
         }
-        for(UUID memberId:groupMembersIds){
-            if(!groupsRepository.checkUserMembership(groupId,memberId)){
-                groupsRepository.addMemberToGroup(groupId,memberId);
-            }
+        List<UUID> usersToAddIds=groupMembersIds.stream().filter(memberId->!groupsRepository.checkUserMembership(groupId,memberId)).collect(Collectors.toList());
+        for(UUID memberId:usersToAddIds){
+            groupsRepository.addMemberToGroup(groupId,memberId);
         }
+        notificationsService.addUsersToGroupNotification(groupId,usersToAddIds);
     }
 }

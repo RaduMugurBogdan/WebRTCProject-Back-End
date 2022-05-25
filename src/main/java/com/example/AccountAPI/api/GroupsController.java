@@ -2,6 +2,7 @@ package com.example.AccountAPI.api;
 
 
 import com.example.AccountAPI.model.PublicUserModel;
+import com.example.AccountAPI.service.interfaces.NotificationsServiceInterface;
 import com.example.AccountAPI.sockets_dtos.CreateGroupInputDto;
 import com.example.AccountAPI.model.GroupModel;
 import com.example.AccountAPI.service.interfaces.GroupsServiceInterface;
@@ -30,12 +31,15 @@ public class GroupsController {
     private UserServiceInterface userService;
     @Autowired
     private GroupsServiceInterface groupsService;
+    @Autowired
+    private NotificationsServiceInterface notificationService;
 
     @MessageMapping("/create_group")
     @SendToUser("/queue/new_group_created")
     public GroupModel createGroup(SimpMessageHeaderAccessor sha, @Payload CreateGroupInputDto dto) {
         UUID userId=userService.getByUsername(sha.getUser().getName()).get().getId();
         UUID groupId=groupsService.createGroup(userId,dto.guestsIds.stream().map((String textUUID)->UUID.fromString(textUUID)).collect(Collectors.toList()), dto.groupName);
+        notificationService.addUsersToGroupNotification(groupId,dto.guestsIds.stream().map((String textUUID)->UUID.fromString(textUUID)).collect(Collectors.toList()));
         return groupsService.getGroupById(groupId).get();
     }
 
@@ -46,6 +50,7 @@ public class GroupsController {
         UUID groupId=UUID.fromString(inputGroupId);
         Optional<GroupModel> groupModel=groupsService.getGroupById(groupId);
         if(groupModel.isPresent() && groupModel.get().getUserId().equals(userId)){
+            notificationService.adminDeletedGroupNotification(groupId);
             groupsService.deleteGroup(groupId);
         }
     }
@@ -72,9 +77,9 @@ public class GroupsController {
     public void leaveGroup(SimpMessageHeaderAccessor sha, @Payload String groupIdInput){
         UUID userId=userService.getByUsername(sha.getUser().getName()).get().getId();
         UUID groupId=UUID.fromString(groupIdInput);
+        notificationService.userLeavedGroupNotification(groupId,userId);
         groupsService.leaveGroup(groupId,userId);
     }
-
 
     //de facut update si pe grupul de pe client
     @MessageMapping("/update_group")

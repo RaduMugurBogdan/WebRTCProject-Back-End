@@ -8,6 +8,7 @@ import com.example.AccountAPI.repository.interfaces.GroupsRepositoryInterface;
 import com.example.AccountAPI.repository.interfaces.UsersRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -39,6 +40,7 @@ public class GroupsRepository implements GroupsRepositoryInterface {
     private final String GET_USER_GROUPS_QUERY = "SELECT group_id FROM GROUPS_MEMBERS WHERE user_id=:userId;";
     private final String REMOVE_USER_FROM_GROUP_COMMAND ="DELETE FROM GROUPS_MEMBERS WHERE group_id=:group_id AND user_id=:user_id;";
     private final String UPDATE_GROUP_NAME_COMMAND="UPDATE GROUPS SET group_name=:group_name WHERE id=:group_id;";
+
     public List<GroupModel> getUserGroups(UUID userId){
         SqlParameterSource namedParameters = new MapSqlParameterSource()
                 .addValue("userId", userId);
@@ -116,8 +118,13 @@ public class GroupsRepository implements GroupsRepositoryInterface {
     @Override
     public Optional<PublicUserModel> getGroupOwner(UUID groupId) {
         SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("groupId", groupId);
-        UUID userId=template.queryForObject(GET_GROUP_OWNER_QUERRY,namedParameters,UUID.class);
-        return usersRepository.getPublicUserModelById(userId);
+
+        try{
+            UUID userId=template.queryForObject(GET_GROUP_OWNER_QUERRY,namedParameters,UUID.class);
+            return usersRepository.getPublicUserModelById(userId);
+        }catch (EmptyResultDataAccessException e){
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -126,14 +133,13 @@ public class GroupsRepository implements GroupsRepositoryInterface {
     }
 
     @Override
-    public List<GroupModel> getAllOwnedGroups(UUID userId) {/*
+    public List<GroupModel> getAllOwnedGroups(UUID userId) {
         SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("userId", userId);
         List<GroupModel> groups = template.query(GET_GROUP_MEMBERS_QUERY, namedParameters, groupModelRowMapper);
         if (groups.size() == 0) {
             return Collections.emptyList();
         }
-        return groups;*/
-        return null;
+        return groups;
     }
 
     public List<PublicUserModel> getAllGroupMembers(UUID groupId) {
