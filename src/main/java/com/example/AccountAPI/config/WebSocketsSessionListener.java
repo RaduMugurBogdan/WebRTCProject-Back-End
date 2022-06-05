@@ -1,5 +1,6 @@
 package com.example.AccountAPI.config;
 
+import com.example.AccountAPI.repository.enums.UserStatusValue;
 import com.example.AccountAPI.service.interfaces.UserServiceInterface;
 import com.example.AccountAPI.service.interfaces.UserStatusServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ public class WebSocketsSessionListener {
     private UserServiceInterface userService;
     @EventListener
     private void handleSessionConnected(SessionConnectEvent event) {
-
+        UUID userId=userService.getByUsername(event.getUser().getName()).get().getId();
+        userStatusService.setUserStatus(userId, UserStatusValue.ACTIVE);
     }
     @EventListener
     private void handleSessionDisconnect(SessionDisconnectEvent event) {

@@ -14,7 +14,6 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Autowired
     private UserInterceptor userInterceptor;
 
-
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/hello", "/get_users_like").setAllowedOrigins("http://localhost:3000");
